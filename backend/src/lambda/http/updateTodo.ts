@@ -15,14 +15,17 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const updateParams = {
     TableName: todosTable,
     Key: { "todoId": todoId },
-      UpdateExpression: "set info.name=:name, info.dueDate=:dueDate, info.done=:done",
-      ExpressionAttributeValues:{
-        "name": updatedTodo.name,
-        "dueDate": updatedTodo.dueDate,
-        "done": updatedTodo.done
-      },
-      ReturnValues:"UPDATED_NEW"
-    }
+    UpdateExpression: "set #n = :a, dueDate = :b, done = :c",
+    ExpressionAttributeValues:{
+      ":a": updatedTodo.name,
+      ":b": updatedTodo.dueDate,
+      ":c": updatedTodo.done
+    },
+    ExpressionAttributeNames:{
+      "#n": "name"
+    },
+    ReturnValues:"UPDATED_NEW"
+  }
 
   const updated = await docClient.update(updateParams).promise()
 
